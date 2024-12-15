@@ -1,42 +1,110 @@
+$engine: 3
+$onesync: on
 name: ESX 1.8.5 Setup
-description: Telepíti az ESX 1.8.5 verziót és a szükséges kiegészítőket.
-author: TeNeved
+author: ESX Framework
+description: Telepíti az ESX 1.8.5-ös verzióját és a szükséges kiegészítőket.
 
 tasks:
-  - task: download
-    input:
-      source: "https://github.com/esx-framework/esx-legacy/archive/refs/tags/v1.8.5.zip"
-      destination: "resources/[esx]/es_extended"
+  # Download default CFX resources
+  - action: download_github
+    src: https://github.com/citizenfx/cfx-server-data
+    ref: master
+    subpath: resources
+    dest: ./resources/[cfx-default]
+  - action: remove_path
+    path: ./resources/[cfx-default]/[gameplay]/chat
+  
+  # Download and prepare server.cfg / database
+  - action: download_github
+    src: https://github.com/esx-framework/esx-recipes
+    ref: legacy
+    dest: ./tmp/recipe
 
-  - task: download
-    input:
-      source: "https://github.com/esx-framework/esx_menu_default/archive/refs/heads/main.zip"
-      destination: "resources/[esx]/esx_menu_default"
+  - action: move_path
+    src: ./tmp/recipe/server.cfg
+    dest: ./server.cfg
 
-  - task: download
-    input:
-      source: "https://github.com/esx-framework/esx_menu_list/archive/refs/heads/main.zip"
-      destination: "resources/[esx]/esx_menu_list"
+  # Download ESX 1.8.5 Core
+  - action: download_github
+    src: https://github.com/esx-framework/esx-legacy
+    ref: v1.8.5
+    dest: ./resources/[esx]/es_extended
 
-  - task: download
-    input:
-      source: "https://github.com/esx-framework/esx_menu_dialog/archive/refs/heads/main.zip"
-      destination: "resources/[esx]/esx_menu_dialog"
+  # Connect to database
+  - action: connect_database
 
-  - task: download
-    input:
-      source: "https://github.com/citizenfx/cfx-server-data/archive/refs/heads/master.zip"
-      destination: "resources/[system]/essentialmode"
+  - action: query_database
+    file: https://github.com/esx-framework/esx-legacy/raw/v1.8.5/sql/extended.sql
 
-  - task: file_append
-    input:
-      file: "server.cfg"
-      content: |
-        ensure es_extended
-        ensure esx_menu_default
-        ensure esx_menu_list
-        ensure esx_menu_dialog
+  # Download essential ESX addons
+  - action: download_github
+    src: https://github.com/esx-framework/esx_menu_default
+    ref: main
+    dest: ./resources/[esx]/esx_menu_default
 
-  - task: run_sql
-    input:
-      source: "https://github.com/esx-framework/esx-legacy/raw/v1.8.5/sql/extended.sql"
+  - action: download_github
+    src: https://github.com/esx-framework/esx_menu_list
+    ref: main
+    dest: ./resources/[esx]/esx_menu_list
+
+  - action: download_github
+    src: https://github.com/esx-framework/esx_menu_dialog
+    ref: main
+    dest: ./resources/[esx]/esx_menu_dialog
+
+  - action: download_github
+    src: https://github.com/esx-framework/esx_basicneeds
+    ref: main
+    dest: ./resources/[esx]/esx_basicneeds
+
+  - action: download_github
+    src: https://github.com/esx-framework/esx_optionalneeds
+    ref: main
+    dest: ./resources/[esx]/esx_optionalneeds
+
+  - action: download_github
+    src: https://github.com/esx-framework/esx_jobs
+    ref: main
+    dest: ./resources/[esx]/esx_jobs
+
+  - action: download_github
+    src: https://github.com/esx-framework/esx_society
+    ref: main
+    dest: ./resources/[esx]/esx_society
+
+  - action: download_github
+    src: https://github.com/esx-framework/esx_billing
+    ref: main
+    dest: ./resources/[esx]/esx_billing
+
+  - action: download_github
+    src: https://github.com/esx-framework/esx_license
+    ref: main
+    dest: ./resources/[esx]/esx_license
+
+  - action: download_github
+    src: https://github.com/esx-framework/esx_vehicle_inventory
+    ref: main
+    dest: ./resources/[esx]/esx_vehicle_inventory
+
+  # Download standalone dependencies
+  - action: download_github
+    src: https://github.com/Bob74/bob74_ipl
+    ref: master
+    dest: ./resources/[standalone]/bob74_ipl
+
+  - action: download_github
+    src: https://github.com/AvarianKnight/pma-voice
+    ref: main
+    dest: ./resources/[standalone]/pma-voice
+
+  - action: download_file
+    path: ./tmp/files/oxmysql.zip
+    url: https://github.com/overextended/oxmysql/releases/latest/download/oxmysql.zip
+  - action: unzip
+    dest: ./resources/[standalone]
+    src: ./tmp/files/oxmysql.zip
+
+  ## Cleanup temporary files
+  - action: remove_path
+    path: ./tmp
