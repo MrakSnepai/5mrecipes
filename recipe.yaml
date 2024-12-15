@@ -3,32 +3,46 @@ description: Telepíti az ESX 1.8.5-ös verzióját és a szükséges kiegészí
 author: TeNeved
 
 tasks:
-  - name: "Letöltés és ESX telepítése"
-    resources:
-      - url: "https://github.com/esx-framework/esx-legacy/archive/refs/tags/v1.8.5.zip"
-        destination: "resources/[esx]/es_extended"
+  - name: "ESX 1.8.5 letöltése"
+    action: download
+    data:
+      url: "https://github.com/esx-framework/esx-legacy/archive/refs/tags/v1.8.5.zip"
+      destination: "resources/[esx]/es_extended"
 
-  - name: "Alapvető ESX kiegészítők telepítése"
-    resources:
-      - url: "https://github.com/esx-framework/esx_menu_default/archive/refs/heads/main.zip"
-        destination: "resources/[esx]/esx_menu_default"
-      - url: "https://github.com/esx-framework/esx_menu_list/archive/refs/heads/main.zip"
-        destination: "resources/[esx]/esx_menu_list"
-      - url: "https://github.com/esx-framework/esx_menu_dialog/archive/refs/heads/main.zip"
-        destination: "resources/[esx]/esx_menu_dialog"
+  - name: "esx_menu_default letöltése"
+    action: download
+    data:
+      url: "https://github.com/esx-framework/esx_menu_default/archive/refs/heads/main.zip"
+      destination: "resources/[esx]/esx_menu_default"
 
-  - name: "EssentialMode és egyéb alapok telepítése"
-    resources:
-      - url: "https://github.com/citizenfx/cfx-server-data/archive/refs/heads/master.zip"
-        destination: "resources/[system]/essentialmode"
+  - name: "esx_menu_list letöltése"
+    action: download
+    data:
+      url: "https://github.com/esx-framework/esx_menu_list/archive/refs/heads/main.zip"
+      destination: "resources/[esx]/esx_menu_list"
+
+  - name: "esx_menu_dialog letöltése"
+    action: download
+    data:
+      url: "https://github.com/esx-framework/esx_menu_dialog/archive/refs/heads/main.zip"
+      destination: "resources/[esx]/esx_menu_dialog"
+
+  - name: "EssentialMode letöltése"
+    action: download
+    data:
+      url: "https://github.com/citizenfx/cfx-server-data/archive/refs/heads/master.zip"
+      destination: "resources/[system]/essentialmode"
 
   - name: "Config fájlok frissítése"
-    commands:
-      - echo "ensure es_extended" >> server.cfg
-      - echo "ensure esx_menu_default" >> server.cfg
-      - echo "ensure esx_menu_list" >> server.cfg
-      - echo "ensure esx_menu_dialog" >> server.cfg
+    action: command
+    data:
+      commands:
+        - "echo ensure es_extended >> server.cfg"
+        - "echo ensure esx_menu_default >> server.cfg"
+        - "echo ensure esx_menu_list >> server.cfg"
+        - "echo ensure esx_menu_dialog >> server.cfg"
 
   - name: "Adatbázis sémák letöltése"
-    sql:
-      - url: "https://github.com/esx-framework/esx-legacy/raw/v1.8.5/sql/extended.sql"
+    action: sql
+    data:
+      url: "https://github.com/esx-framework/esx-legacy/raw/v1.8.5/sql/extended.sql"
